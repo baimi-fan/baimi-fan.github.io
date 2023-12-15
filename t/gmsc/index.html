@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无限Gmail在线生成-Baimi.fan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>无限Gmail在线生成</h2>
+
+    <p>使用 <b>生成的 Gmail邮箱</b> 接收邮件，将会自动转发到 <b>输入的原邮箱地址</b> <br/>本网站仅供合法技术测试使用，请勿用于任何违法用途，确保遵守法律法规。</p>
+
+    <label for="inputEmail">输入Gmail邮箱:</label>
+    <input type="email" id="inputEmail" placeholder="XXX@gmail.com">
+
+    <label for="quantity">生成数量:</label>
+    <input type="number" id="quantity" value="10" min="1">
+
+    <button onclick="generateEmails()">生成邮箱</button>
+    <button onclick="copyAllToClipboard()">一键复制所有邮箱地址</button>
+
+    <div id="emailList"></div>
+
+    <script>
+        function generateEmails() {
+            var inputEmail = document.getElementById('inputEmail').value;
+            var quantity = document.getElementById('quantity').value;
+
+            // 输入验证：使用正则表达式验证邮箱格式
+            if (!isValidEmail(inputEmail)) {
+                alert('请输入有效的邮箱地址！');
+                return;
+            }
+
+            var emailList = document.getElementById('emailList');
+            emailList.innerHTML = '';
+
+            for (var i = 0; i < quantity; i++) {
+                var randomChars = generateRandomChars(8);
+                // 将随机字符添加到邮箱前缀
+                var generatedEmail = inputEmail.split('@')[0] + '+' + randomChars + '@gmail.com';
+
+                var emailElement = document.createElement('div');
+                // 防止跨站脚本攻击：使用innerText确保文本不被解释为HTML
+                emailElement.innerHTML = '<a href="#" onclick="copyToClipboard(\'' + generatedEmail.replace("'", "\\'") + '\')">' + generatedEmail + '</a>';
+                emailList.appendChild(emailElement);
+            }
+        }
+
+        // 一键复制所有邮箱地址
+        function copyAllToClipboard() {
+            var emailList = document.getElementById('emailList');
+            var emails = emailList.getElementsByTagName('a');
+            
+            var allEmails = '';
+            for (var i = 0; i < emails.length; i++) {
+                allEmails += emails[i].innerText + '\n';
+            }
+
+            var tempInput = document.createElement('textarea');
+            tempInput.value = allEmails;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            alert('所有邮箱地址已复制到剪贴板:\n' + allEmails);
+        }
+
+        // 输入验证：使用正则表达式验证邮箱格式
+        function isValidEmail(email) {
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function generateRandomChars(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        // 安全剪贴板操作：使用document.execCommand的替代方法或第三方库
+        function copyToClipboard(email) {
+            var tempInput = document.createElement('input');
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('邮箱已复制到剪贴板: ' + email);
+        }
+    </script>
+
+</body>
+</html>
